@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>세무 AI 도우미</title>
+
+</head>
+
+<body>
+
+    <h1>세무 AI 도우미</h1>
+
+    <p>
+        사업자의 세무 궁금증을
+        쉽고 빠르게 해결해드립니다.
+    </p>
+
+    <hr>
+
+    <h2>무엇이 궁금하신가요?</h2>
+
+    <textarea
+        id="question"
+        placeholder="예: 간이과세자는 부가가치세를 어떻게 신고하나요?"
+        rows="5"
+        cols="50">
+    </textarea>
+
+    <br><br>
+
+    <button onclick="askAI()">
+        질문하기
+    </button>
+
+    <h2>답변</h2>
+
+    <div id="answer">
+        아직 질문하지 않았습니다.
+    </div>
+
+    <script>
+
+        function askAI() {
+
+            const question =
+                document.getElementById("question").value;
+
+            document.getElementById("answer").innerText =
+                "질문을 받았습니다: " + question;
+
+        }
+
+    </script>
+
+</body>
+
+</html>
