@@ -1,63 +1,165 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>세무 AI 도우미</title>
 
-    <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f7fa;
+    }
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    h1 {
+      text-align: center;
+      color: #1f2937;
+    }
 
-    <title>세무 AI 도우미</title>
+    .description {
+      text-align: center;
+      color: #6b7280;
+      margin-bottom: 30px;
+    }
 
+    .chat-box {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    textarea {
+      width: 100%;
+      height: 130px;
+      padding: 15px;
+      box-sizing: border-box;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 16px;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .answer-box {
+      margin-top: 25px;
+      padding: 20px;
+      background: #f9fafb;
+      border-radius: 10px;
+      white-space: pre-wrap;
+      line-height: 1.7;
+    }
+
+    .loading {
+      color: #6b7280;
+    }
+  </style>
 </head>
 
 <body>
 
-    <h1>세무 AI 도우미</h1>
+  <h1>세무 AI 도우미</h1>
 
-    <p>
-        사업자의 세무 궁금증을
-        쉽고 빠르게 해결해드립니다.
-    </p>
+  <p class="description">
+    사업자의 세무 궁금증을 쉽고 빠르게 해결해드립니다.
+  </p>
 
-    <hr>
+  <div class="chat-box">
 
     <h2>무엇이 궁금하신가요?</h2>
 
     <textarea
-        id="question"
-        placeholder="예: 간이과세자는 부가가치세를 어떻게 신고하나요?"
-        rows="5"
-        cols="50">
-    </textarea>
+      id="question"
+      placeholder="예: 간이과세자도 세금계산서를 발급해야 하나요?"
+    ></textarea>
 
-    <br><br>
-
-    <button onclick="askAI()">
-        질문하기
+    <button id="askButton" onclick="askAI()">
+      질문하기
     </button>
 
-    <h2>답변</h2>
-
-    <div id="answer">
-        아직 질문하지 않았습니다.
+    <div id="answer" class="answer-box">
+      AI 답변이 여기에 표시됩니다.
     </div>
 
-    <script>
+  </div>
 
-        function askAI() {
+  <script>
+    async function askAI() {
 
-            const question =
-                document.getElementById("question").value;
+      const question = document.getElementById("question").value.trim();
+      const answerBox = document.getElementById("answer");
+      const button = document.getElementById("askButton");
 
-            document.getElementById("answer").innerText =
-                "질문을 받았습니다: " + question;
+      if (!question) {
+        answerBox.textContent = "질문을 입력해주세요.";
+        return;
+      }
 
+      button.disabled = true;
+      button.textContent = "답변을 생성하고 있습니다...";
+
+      answerBox.innerHTML =
+        '<span class="loading">🤖 세무 AI가 답변을 작성하고 있습니다...</span>';
+
+      try {
+
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            question: question
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "AI 요청에 실패했습니다.");
         }
 
-    </script>
+        answerBox.textContent = data.answer;
+
+      } catch (error) {
+
+        console.error(error);
+
+        answerBox.textContent =
+          "오류가 발생했습니다.\n\n" +
+          error.message;
+
+      } finally {
+
+        button.disabled = false;
+        button.textContent = "질문하기";
+
+      }
+    }
+  </script>
 
 </body>
-
 </html>
