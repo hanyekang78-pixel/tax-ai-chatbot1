@@ -1,14 +1,4 @@
 export default {
-  async fetch(request, env, ctx) {
-    // 인식된 모든 환경 변수의 키(이름) 목록을 반환
-    return new Response(JSON.stringify({
-      keysFound: Object.keys(env),
-      hasGeminiKey: !!env.GEMINI_API_KEY
-    }), {
-      headers: { "Content-Type": "application/json" }
-    });
-  }
-};export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
